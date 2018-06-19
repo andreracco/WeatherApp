@@ -42,6 +42,9 @@ class WeatherModel {
     }
     
     func setURL(city: String) {
+        var city = city.trimmingCharacters(in: .whitespacesAndNewlines)
+        city = city.replacingOccurrences(of: " ", with: "%20")
+
         url = URL(string: "https://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=365aca34b5c4ea637e3c5ce5b50627d1")!
     }
     
@@ -49,12 +52,9 @@ class WeatherModel {
         
         Alamofire.request(url).responseJSON(completionHandler: { response in
             let result = response.result
-            print(result)
             let dictResult = result.value as! JSONStandard
-    
-            print(dictResult.count)
+
             if dictResult.count == 2 {
-                print(String(describing: dictResult["cod"]))
                 self._date = Date().timeIntervalSince1970
                 self._location = "CITY NOT FOUND"
                 self._weather = ""
@@ -68,17 +68,16 @@ class WeatherModel {
             let weatherArray = dictResult["weather"] as! [JSONStandard]
             
             let weather = weatherArray[0]["main"] as! String
-
-                let name = dictResult["name"] as! String
-                let sys = dictResult["sys"] as! JSONStandard
+            let name = dictResult["name"] as! String
+            let sys = dictResult["sys"] as! JSONStandard
             let country = sys["country"] as! String
-                let dt = dictResult["dt"] as! Double
+            let dt = dictResult["dt"] as! Double
     
                 
             self._temperature = String(format: "%.0f° C", temperature - 273.15)
-                self._location = "\(name), \(country)"
-                self._weather = weather
-                self._date = dt
+            self._location = "\(name), \(country)"
+            self._weather = weather
+            self._date = dt
             
             completed()
         })

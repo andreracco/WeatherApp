@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WeatherVC: UIViewController {
+class WeatherVC: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var cityTextField: UITextField!
     @IBOutlet weak var getButton: UIButton!
@@ -28,9 +28,12 @@ class WeatherVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setNeedsStatusBarAppearanceUpdate()
-        
-        cityTextField.isHidden = true
-        getButton.isHidden = true
+
+        weather.getData {
+            self.updateUI()
+        }
+
+        cityTextField.delegate = self
         dateLabel.text = ""
         temperatureLabel.text = ""
         locationLabel.text = "Loading..."
@@ -39,20 +42,15 @@ class WeatherVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
-        
-        weather.getData {
-            self.updateUI()
-        }
-        
-        cityTextField.isHidden = false
-        getButton.isHidden = false
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
-        
-        
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return true
     }
     
     @IBAction func getButtonTapped(_ sender: Any) {
@@ -60,6 +58,7 @@ class WeatherVC: UIViewController {
             emptyLabels()
             dateLabel.text = "CITY EMPTY"
         } else {
+            self.view.endEditing(true)
             weather.setURL(city: cityTextField.text!)
             weather.getData {
                 self.updateUI()
