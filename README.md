@@ -1,2 +1,2 @@
 # WeatherApp
-Simple WeatherApp using Alomofire (for study)
+Simple WeatherApp using Alamofire (for study)
