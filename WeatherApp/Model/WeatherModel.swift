@@ -44,6 +44,7 @@ class WeatherModel {
     func setURL(city: String) {
         var city = city.trimmingCharacters(in: .whitespacesAndNewlines)
         city = city.replacingOccurrences(of: " ", with: "%20")
+        city = city.replacingOccurrences(of: "ã", with: "a")
 
         url = URL(string: "https://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=365aca34b5c4ea637e3c5ce5b50627d1")!
     }
@@ -53,7 +54,9 @@ class WeatherModel {
         Alamofire.request(url).responseJSON(completionHandler: { response in
             let result = response.result
             let dictResult = result.value as! JSONStandard
-
+            print(result)
+            print(dictResult)
+            
             if dictResult.count == 2 {
                 self._date = Date().timeIntervalSince1970
                 self._location = "CITY NOT FOUND"
